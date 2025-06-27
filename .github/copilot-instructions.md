@@ -14,7 +14,7 @@ You are working on a Model Context Protocol (MCP) server for the Relay Protocol 
 
 ### 1. Separation of Concerns
 - Keep API client logic separate from MCP tool handlers
-- Use dedicated schema files for validation
+- Use comprehensive TypeScript types for validation
 - Separate types from implementation
 
 ### 2. Error Handling
@@ -28,7 +28,7 @@ You are working on a Model Context Protocol (MCP) server for the Relay Protocol 
 - Use Zod for runtime validation matching TypeScript types
 
 ### 4. Tool Design
-- Tools are grouped by resource (jobs, workflows, callbacks)
+- Tools are grouped by resource (chains, prices, quotes, requests, transactions, currencies, swaps)
 - All tools prefixed with `relay_` to avoid conflicts
 - Tool descriptions include examples
 - Direct data return (no success/data wrapping)
@@ -40,18 +40,17 @@ You are working on a Model Context Protocol (MCP) server for the Relay Protocol 
 src/
 ├── client/       # HTTP client and error handling
 ├── tools/        # MCP tool implementations
-├── schemas/      # Zod validation schemas
 ├── types/        # TypeScript type definitions
-├── utils/        # Helper functions
+├── config.ts     # Configuration settings
 └── index.ts      # MCP server entry point
 ```
 
 ### Naming Conventions
 - Files: kebab-case (e.g., `relay-client.ts`)
 - Classes: PascalCase (e.g., `RelayClient`)
-- Functions: camelCase (e.g., `createJob`)
+- Functions: camelCase (e.g., `swapMultiInput`)
 - Constants: UPPER_SNAKE_CASE (e.g., `MAX_RETRIES`)
-- MCP tools: snake_case with prefix (e.g., `relay_create_job`)
+- MCP tools: snake_case with prefix (e.g., `relay_get_chains`)
 
 ### Error Response Format
 ```typescript
@@ -127,5 +126,29 @@ try {
 - Error details include full request/response data
 - Use fetchAll sparingly to avoid large responses
 - Test with small datasets first
+
+## Implemented Tools
+
+The project implements 9 MCP tools covering all major Relay Protocol operations:
+
+1. **`relay_get_chains`** - List supported blockchain networks
+2. **`relay_get_token_price`** - Get real-time token prices
+3. **`relay_get_currencies`** - Discover tokens with advanced filtering
+4. **`relay_get_quote`** - Generate bridging/swap quotes
+5. **`relay_swap_multi_input`** - Execute multi-chain swaps
+6. **`relay_get_execution_status`** - Track request progress
+7. **`relay_get_requests`** - Monitor request history
+8. **`relay_transactions_index`** - Index transactions for tracking
+9. **`relay_transactions_single`** - Index specific transfers/wraps
+
+## Project Status
+
+- ✅ All 9 tools implemented and documented
+- ✅ Comprehensive TypeScript types for all API responses
+- ✅ Full error handling with detailed debugging information
+- ✅ Zod validation schemas integrated into tool handlers
+- ✅ Complete documentation with JSDoc comments
+- ✅ Node.js v20+ requirement for modern features
+- ✅ Production-ready with proper build pipeline
 
 Remember: The goal is to provide a clean, type-safe interface to Relay Protocol through MCP tools while maintaining excellent developer experience.
