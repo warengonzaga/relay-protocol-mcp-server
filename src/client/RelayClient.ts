@@ -1,14 +1,18 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import { RelayAPIError, RelayConnectionError } from './errors.js';
 import type {
-  Job,
-  CreateJobRequest,
-  UpdateJobRequest,
-  QueryJobsRequest,
-  Workflow,
-  Callback,
-  RegisterCallbackRequest,
-  PaginatedResponse,
+  ChainsResponse,
+  TokenPrice,
+  QuoteRequest,
+  Quote,
+  ExecutionStatus,
+  CrossChainRequest,
+  MultiInputQuoteRequest,
+  TransactionIndexRequest,
+  CurrenciesV2Request,
+  CurrencyV2,
+  SwapMultiInputRequest,
+  SwapResponse,
 } from '../types/relay.js';
 
 export class RelayClient {
@@ -64,70 +68,89 @@ export class RelayClient {
     );
   }
 
-  // Job operations
-  async createJob(request: CreateJobRequest): Promise<Job> {
-    const response = await this.client.post<Job>('/jobs', request);
+  /**
+   * Get all supported chains
+   * https://docs.relay.link/references/api/get-chains
+   */
+  async getChains(includeChains?: string): Promise<ChainsResponse> {
+    const params = includeChains ? { includeChains } : {};
+    const response = await this.client.get<ChainsResponse>('/chains', { params });
     return response.data;
   }
 
-  async getJob(jobId: string): Promise<Job> {
-    const response = await this.client.get<Job>(`/jobs/${jobId}`);
-    return response.data;
-  }
-
-  async updateJob(jobId: string, request: UpdateJobRequest): Promise<Job> {
-    const response = await this.client.put<Job>(`/jobs/${jobId}`, request);
-    return response.data;
-  }
-
-  async queryJobs(request: QueryJobsRequest): Promise<PaginatedResponse<Job>> {
-    const response = await this.client.get<PaginatedResponse<Job>>('/jobs', {
-      params: request,
+  /**
+   * Get token price for a specific chain and currency
+   * https://docs.relay.link/references/api/get-token-price
+   */
+  async getTokenPrice(chainId: number, currency: string): Promise<TokenPrice> {
+    const response = await this.client.get<TokenPrice>('/price', {
+      params: { chain: chainId, currency }
     });
     return response.data;
   }
 
-  async deleteJob(jobId: string): Promise<void> {
-    await this.client.delete(`/jobs/${jobId}`);
-  }
-
-  // Workflow operations
-  async listWorkflows(page: number = 1, limit: number = 20): Promise<PaginatedResponse<Workflow>> {
-    const response = await this.client.get<PaginatedResponse<Workflow>>('/workflows', {
-      params: { page, limit },
+  /**
+   * Get an executable quote for bridge, swap or call
+   * https://docs.relay.link/references/api/get-quote
+   */
+  async getQuote(request: QuoteRequest): Promise<Quote> {
+    const response = await this.client.get<Quote>('/quote', {
+      params: request
     });
     return response.data;
   }
 
-  async getWorkflow(workflowId: string): Promise<Workflow> {
-    const response = await this.client.get<Workflow>(`/workflows/${workflowId}`);
+  /**
+   * Get execution status for a request
+   * https://docs.relay.link/references/api/get-execution-status
+   */
+  async getExecutionStatus(requestId: string): Promise<ExecutionStatus> {
+    const response = await this.client.get<ExecutionStatus>(`/requests/${requestId}/status`);
     return response.data;
   }
 
-  // Callback operations
-  async registerCallback(request: RegisterCallbackRequest): Promise<Callback> {
-    const response = await this.client.post<Callback>('/callbacks', request);
+  /**
+   * Get cross-chain request details
+   * https://docs.relay.link/references/api/get-request
+   */
+  async getRequest(requestId: string): Promise<CrossChainRequest> {
+    const response = await this.client.get<CrossChainRequest>(`/requests/${requestId}`);
     return response.data;
   }
 
-  async listCallbacks(page: number = 1, limit: number = 20): Promise<PaginatedResponse<Callback>> {
-    const response = await this.client.get<PaginatedResponse<Callback>>('/callbacks', {
-      params: { page, limit },
-    });
+  /**
+   * Notify backend about a transaction
+   * https://docs.relay.link/references/api/transactions-index
+   */
+  async indexTransaction(request: TransactionIndexRequest): Promise<{ success: boolean }> {
+    const response = await this.client.post<{ success: boolean }>('/transactions', request);
     return response.data;
   }
 
-  async getCallback(callbackId: string): Promise<Callback> {
-    const response = await this.client.get<Callback>(`/callbacks/${callbackId}`);
+  /**
+   * Get multi-input quote for swapping tokens from multiple origin chains
+   * https://docs.relay.link/references/api/multi-input-quote
+   */
+  async getMultiInputQuote(request: MultiInputQuoteRequest): Promise<Quote> {
+    const response = await this.client.post<Quote>('/quote/multi-input', request);
     return response.data;
   }
 
-  async updateCallback(callbackId: string, request: Partial<RegisterCallbackRequest>): Promise<Callback> {
-    const response = await this.client.put<Callback>(`/callbacks/${callbackId}`, request);
+  /**
+   * Get currencies metadata from curated list
+   * https://docs.relay.link/references/api/get-currencies-v2
+   */
+  async getCurrencies(request: CurrenciesV2Request = {}): Promise<CurrencyV2[]> {
+    const response = await this.client.post<CurrencyV2[]>('/currencies/v2', request);
     return response.data;
   }
 
-  async deleteCallback(callbackId: string): Promise<void> {
-    await this.client.delete(`/callbacks/${callbackId}`);
+  /**
+   * Get executable quote for swapping tokens from multiple origin chains
+   * https://docs.relay.link/references/api/swap-multi-input
+   */
+  async swapMultiInput(request: SwapMultiInputRequest): Promise<SwapResponse> {
+    const response = await this.client.post<SwapResponse>('/execute/swap/multi-input', request);
+    return response.data;
   }
 }

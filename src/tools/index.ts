@@ -1,7 +1,11 @@
 import { RelayClient } from '../client/RelayClient.js';
-import { createJobTools } from './jobs.js';
-import { createWorkflowTools } from './workflows.js';
-import { createCallbackTools } from './callbacks.js';
+import { createChainTools } from './chains.js';
+import { createPriceTools } from './price.js';
+import { createQuoteTools } from './quotes.js';
+import { createRequestTools } from './requests.js';
+import { createTransactionTools } from './transactions.js';
+import { createCurrencyTools } from './currencies.js';
+import { createSwapTools } from './swap.js';
 
 interface Tool {
   name: string;
@@ -12,10 +16,22 @@ interface Tool {
 
 export function createAllTools(client: RelayClient): Record<string, Tool> {
   return {
-    ...createJobTools(client),
-    ...createWorkflowTools(client),
-    ...createCallbackTools(client),
+    ...createChainTools(client),
+    ...createPriceTools(client),
+    ...createQuoteTools(client),
+    ...createRequestTools(client),
+    ...createTransactionTools(client),
+    ...createCurrencyTools(client),
+    ...createSwapTools(client),
   };
 }
 
-export { createJobTools, createWorkflowTools, createCallbackTools };
+export { 
+  createChainTools, 
+  createPriceTools, 
+  createQuoteTools, 
+  createRequestTools, 
+  createTransactionTools,
+  createCurrencyTools,
+  createSwapTools 
+};
