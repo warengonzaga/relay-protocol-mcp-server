@@ -54,13 +54,13 @@ export function createSwapTools(client: RelayClient) {
   return {
     relay_swap_multi_input: {
       name: 'relay_swap_multi_input',
-      description: 'Get an executable quote for swapping tokens from multiple origin chains to a single destination chain. Returns transaction steps and fee breakdown.',
+      description: 'Execute multi-chain token swaps. IMPORTANT: For EXACT_INPUT, do NOT include "amount" at root level - only in origins array. For EXACT_OUTPUT, include "amount" at root level. Always use TOKEN CONTRACT ADDRESSES. Examples:\n\nEXACT_INPUT (Bridge 1 USDC from Ethereum to Optimism): {"user": "0x123...", "origins": [{"chainId": 1, "currency": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "amount": "1000000"}], "destinationChainId": 10, "destinationCurrency": "0x0b2c639c533813f4aa9d7837caf62653d097ff85", "tradeType": "EXACT_INPUT"}\n\nEXACT_OUTPUT (Get exactly 100 USDC on Base): {"user": "0x123...", "amount": "100000000", "origins": [{"chainId": 1, "currency": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "amount": "50000000"}], "destinationChainId": 8453, "destinationCurrency": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", "tradeType": "EXACT_OUTPUT"}',
       inputSchema: {
         type: 'object',
         properties: {
           user: {
             type: 'string',
-            description: 'User address that will make the deposit on a given origin chain'
+            description: 'User wallet address that will make deposits and receive tokens'
           },
           origins: {
             type: 'array',
@@ -69,64 +69,64 @@ export function createSwapTools(client: RelayClient) {
               properties: {
                 chainId: {
                   type: 'number',
-                  description: 'Origin chain ID'
+                  description: 'Origin chain ID (e.g., 1 for Ethereum, 10 for Optimism, 137 for Polygon)'
                 },
                 currency: {
                   type: 'string',
-                  description: 'Currency address or symbol'
+                  description: 'Token contract address (e.g., "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" for USDC on Ethereum)'
                 },
                 amount: {
                   type: 'string',
-                  description: 'Amount to swap from this origin'
+                  description: 'Amount in smallest unit (e.g., "1000000" = 1 USDC with 6 decimals)'
                 },
                 user: {
                   type: 'string',
-                  description: 'Optional user address for this origin'
+                  description: 'Optional: different user address for this specific origin'
                 }
               },
               required: ['chainId', 'currency', 'amount'],
               additionalProperties: false
             },
-            description: 'Array of origin chains, currencies, and amounts to swap from'
+            description: 'Array of origin tokens to swap from multiple chains'
           },
           destinationCurrency: {
             type: 'string',
-            description: 'Destination currency address or symbol'
+            description: 'Destination token contract address (e.g., "0x0b2c639c533813f4aa9d7837caf62653d097ff85" for USDC on Optimism)'
           },
           destinationChainId: {
             type: 'number',
-            description: 'Destination chain ID'
+            description: 'Destination chain ID (e.g., 10 for Optimism, 8453 for Base, 42161 for Arbitrum)'
           },
           tradeType: {
             type: 'string',
             enum: ['EXACT_INPUT', 'EXACT_OUTPUT'],
-            description: 'Type of trade - exact input or exact output'
+            description: 'EXACT_INPUT: Use exact amounts from origins. EXACT_OUTPUT: Get exact amount at destination (requires "amount" field)'
           },
           recipient: {
             type: 'string',
-            description: 'Optional recipient address (defaults to user)'
+            description: 'Optional: recipient address (defaults to user address)'
           },
           refundTo: {
             type: 'string',
-            description: 'Optional refund address'
+            description: 'Optional: refund address in case of failure'
           },
           amount: {
             type: 'string',
-            description: 'Optional total amount (for EXACT_OUTPUT)'
+            description: 'ONLY for EXACT_OUTPUT: exact amount to receive at destination (in smallest unit)'
           },
           txs: {
             type: 'array',
             items: {
               type: 'object',
               properties: {
-                to: { type: 'string' },
-                value: { type: 'string' },
-                data: { type: 'string' }
+                to: { type: 'string', description: 'Transaction recipient address' },
+                value: { type: 'string', description: 'ETH value to send' },
+                data: { type: 'string', description: 'Transaction calldata' }
               },
               required: ['to', 'value', 'data'],
               additionalProperties: false
             },
-            description: 'Optional array of additional transactions'
+            description: 'Optional: additional transactions to execute'
           },
           txsGasLimit: {
             type: 'number',
@@ -134,7 +134,7 @@ export function createSwapTools(client: RelayClient) {
           },
           partial: {
             type: 'boolean',
-            description: 'Allow partial fills'
+            description: 'Allow partial fills if full amount not available'
           },
           referrer: {
             type: 'string',

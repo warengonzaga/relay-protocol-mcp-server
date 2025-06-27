@@ -6,9 +6,10 @@ import type {
   QuoteRequest,
   Quote,
   ExecutionStatus,
-  CrossChainRequest,
-  MultiInputQuoteRequest,
+  GetRequestsRequest,
+  GetRequestsResponse,
   TransactionIndexRequest,
+  TransactionSingleRequest,
   CurrenciesV2Request,
   CurrencyV2,
   SwapMultiInputRequest,
@@ -81,9 +82,9 @@ export class RelayClient {
    * Get token price for a specific chain and currency
    * https://docs.relay.link/references/api/get-token-price
    */
-  async getTokenPrice(chainId: number, currency: string): Promise<TokenPrice> {
-    const response = await this.client.get<TokenPrice>('/price', {
-      params: { chain: chainId, currency }
+  async getTokenPrice(chainId: number, address: string): Promise<TokenPrice> {
+    const response = await this.client.get<TokenPrice>('/currencies/token/price', {
+      params: { chainId, address }
     });
     return response.data;
   }
@@ -93,27 +94,29 @@ export class RelayClient {
    * https://docs.relay.link/references/api/get-quote
    */
   async getQuote(request: QuoteRequest): Promise<Quote> {
-    const response = await this.client.get<Quote>('/quote', {
-      params: request
+    const response = await this.client.post<Quote>('/quote', request);
+    return response.data;
+  }
+
+  /**
+   * Get execution status for a request (v2)
+   * https://docs.relay.link/references/api/get-intents-status-v2
+   */
+  async getExecutionStatus(requestId: string): Promise<ExecutionStatus> {
+    const response = await this.client.get<ExecutionStatus>('/intents/status/v2', {
+      params: { requestId }
     });
     return response.data;
   }
 
   /**
-   * Get execution status for a request
-   * https://docs.relay.link/references/api/get-execution-status
+   * Get all cross-chain transactions with filtering
+   * https://docs.relay.link/references/api/get-requests
    */
-  async getExecutionStatus(requestId: string): Promise<ExecutionStatus> {
-    const response = await this.client.get<ExecutionStatus>(`/requests/${requestId}/status`);
-    return response.data;
-  }
-
-  /**
-   * Get cross-chain request details
-   * https://docs.relay.link/references/api/get-request
-   */
-  async getRequest(requestId: string): Promise<CrossChainRequest> {
-    const response = await this.client.get<CrossChainRequest>(`/requests/${requestId}`);
+  async getRequests(request: GetRequestsRequest = {}): Promise<GetRequestsResponse> {
+    const response = await this.client.get<GetRequestsResponse>('/requests/v2', {
+      params: request
+    });
     return response.data;
   }
 
@@ -121,17 +124,17 @@ export class RelayClient {
    * Notify backend about a transaction
    * https://docs.relay.link/references/api/transactions-index
    */
-  async indexTransaction(request: TransactionIndexRequest): Promise<{ success: boolean }> {
-    const response = await this.client.post<{ success: boolean }>('/transactions', request);
+  async indexTransaction(request: TransactionIndexRequest): Promise<{ message: string }> {
+    const response = await this.client.post<{ message: string }>('/transactions/index', request);
     return response.data;
   }
 
   /**
-   * Get multi-input quote for swapping tokens from multiple origin chains
-   * https://docs.relay.link/references/api/multi-input-quote
+   * Notify backend to index transfers, wraps and unwraps
+   * https://docs.relay.link/references/api/transactions-single
    */
-  async getMultiInputQuote(request: MultiInputQuoteRequest): Promise<Quote> {
-    const response = await this.client.post<Quote>('/quote/multi-input', request);
+  async indexTransactionSingle(request: TransactionSingleRequest): Promise<{ message: string }> {
+    const response = await this.client.post<{ message: string }>('/transactions/single', request);
     return response.data;
   }
 

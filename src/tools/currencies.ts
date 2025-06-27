@@ -37,7 +37,7 @@ export function createCurrencyTools(client: RelayClient) {
   return {
     relay_get_currencies: {
       name: 'relay_get_currencies',
-      description: 'Get currencies metadata from a curated list. Supports filtering by chain IDs, search terms, addresses, and other criteria.',
+      description: 'Get currencies metadata from a curated list. Supports filtering by chain IDs, search terms, addresses, and other criteria.\n\nCommon Examples:\n• Find USDC on specific chains: {"chainIds": [1, 10, 8453], "term": "usdc", "verified": true, "limit": 10}\n• All major tokens on Ethereum: {"chainIds": [1], "defaultList": true, "limit": 20}\n• Search by contract address: {"address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "includeAllChains": true}\n• Verified tokens only: {"verified": true, "limit": 50}\n• Deposit-address supported tokens: {"depositAddressOnly": true}\n\nTip: Use verified=true to avoid scam/fake tokens. Use term to search by symbol/name.',
       inputSchema: {
         type: 'object',
         properties: {

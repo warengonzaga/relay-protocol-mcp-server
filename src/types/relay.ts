@@ -104,7 +104,7 @@ export interface QuoteRequest {
   originCurrency: string;
   destinationCurrency: string;
   amount: string;
-  tradeType?: 'EXACT_INPUT' | 'EXACT_OUTPUT';
+  tradeType?: 'EXACT_INPUT' | 'EXACT_OUTPUT' | 'EXPECTED_OUTPUT';
 }
 
 export interface QuoteStep {
@@ -171,8 +171,35 @@ export interface Quote {
 export interface ExecutionStatus {
   status: 'refund' | 'delayed' | 'waiting' | 'failure' | 'pending' | 'success';
   details?: string;
-  txHash?: string;
-  timestamp?: number;
+  inTxHashes: string[];
+  txHashes: string[];
+  time: number;
+  originChainId: number;
+  destinationChainId: number;
+}
+
+export interface GetRequestsRequest {
+  limit?: number;
+  continuation?: string;
+  user?: string;
+  hash?: string;
+  originChainId?: number;
+  destinationChainId?: number;
+  privateChainsToInclude?: string;
+  id?: string;
+  startTimestamp?: number;
+  endTimestamp?: number;
+  startBlock?: number;
+  endBlock?: number;
+  chainId?: string;
+  referrer?: string;
+  sortBy?: 'createdAt' | 'updatedAt';
+  sortDirection?: 'asc' | 'desc';
+}
+
+export interface GetRequestsResponse {
+  requests: CrossChainRequest[];
+  continuation?: string;
 }
 
 export interface CrossChainRequest {
@@ -203,8 +230,14 @@ export interface MultiInputQuoteRequest {
 
 export interface TransactionIndexRequest {
   txHash: string;
-  chainId: number;
+  chainId: string;
   requestId?: string;
+}
+
+export interface TransactionSingleRequest {
+  requestId: string;
+  chainId: string;
+  tx: string;
 }
 
 // Get Currencies V2 API types
