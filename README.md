@@ -1,275 +1,133 @@
 # Relay Protocol MCP Server
 
-Model Context Protocol (MCP) server for interacting with the [Relay Protocol REST API](https://docs.relay.link/references/api/) for cross-chain bridging and token swapping.
+Model Context Protocol (MCP) server for the [Relay Protocol REST API](https://docs.relay.link/references/api/) enabling cross-chain bridging and token swapping operations.
 
 ## Features
 
-- **Complete API Coverage** - All 9 Relay Protocol REST API endpoints implemented
-- **Cross-Chain Bridging** - Bridge tokens between supported blockchain networks
-- **Token Price Queries** - Get real-time token prices across chains
-- **Multi-Chain Swaps** - Execute complex swaps across multiple chains
-- **Transaction Monitoring** - Track execution status and request details
-- **Currency Discovery** - Browse supported tokens and chains
-- **Type Safety** - Full TypeScript support with Zod validation schemas
-- **Error Handling** - Comprehensive error reporting and debugging
-- **Zero Configuration** - No API keys or environment setup required
+- **Cross-Chain Bridging** - Bridge tokens between 50+ blockchain networks
+- **Multi-Chain Swaps** - Aggregate tokens from multiple chains into single destination
+- **Real-Time Pricing** - Get current token prices across all supported chains
+- **Request Monitoring** - Track execution status and transaction details
+- **Currency Discovery** - Browse 1000+ supported tokens with filtering
+- **Zero Configuration** - No API keys required (free public API)
+- **Type Safety** - Full TypeScript support with comprehensive validation
 
-## Installation
+## Quick Start
 
 ```bash
-yarn install
-yarn build
-```
+# Install and build
+yarn install && yarn build
 
-## Configuration
-
-No configuration required! The server uses the public Relay Protocol API:
-
-- **API URL**: `https://api.relay.link`
-- **Timeout**: 30 seconds
-- **Authentication**: None (Relay Protocol is free and public)
-
-## Usage
-
-### Running the MCP Server
-
-```bash
-# Development with auto-reload
+# Run development server
 yarn dev
 
-# Production
+# Run production server
 yarn start
 ```
 
-### Integrating with Claude Desktop
+## MCP Integration
 
 Add to your Claude Desktop configuration file:
 
-**Configuration File Locations:**
+**Config Location:**
+
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 - **Linux**: `~/.config/Claude/claude_desktop_config.json`
-
-**Configuration:**
 
 ```json
 {
   "mcpServers": {
     "relay-protocol": {
       "command": "node",
-      "args": ["/path/to/relay-protocol-mcp-server/dist/index.js"]
+      "args": ["/absolute/path/to/relay-protocol-mcp-server/dist/index.js"]
     }
   }
 }
 ```
 
-## Available Tools
+## Available Tools (9 total)
 
-### Chain Information
+| Tool | Purpose | Example Use Case |
+|------|---------|------------------|
+| `relay_get_chains` | List supported blockchain networks | "Show me all chains Relay supports" |
+| `relay_get_token_price` | Get real-time token prices | "What's the price of USDC on Ethereum?" |
+| `relay_get_currencies` | Discover tokens with advanced filtering | "Show verified tokens on Arbitrum" |
+| `relay_get_quote` | Generate bridging/swap quotes | "Quote bridging 100 USDC from Ethereum to Polygon" |
+| `relay_swap_multi_input` | Execute multi-chain swaps | "Swap ETH + USDC from multiple chains to USDC on Base" |
+| `relay_get_execution_status` | Track request progress | "Check status of my bridge transaction" |
+| `relay_get_requests` | Monitor request history | "Show my recent cross-chain transactions" |
+| `relay_transactions_index` | Index transactions for tracking | "Register this transaction for monitoring" |
+| `relay_transactions_single` | Index specific transfers/wraps | "Track this specific transfer operation" |
 
-- **`relay_get_chains`** - Get all supported chains for cross-chain operations
-  - Returns detailed chain information including RPC URLs, explorers, currencies, and supported tokens
-  - Optional filtering by specific chains
+## Example Prompts
 
-### Token Pricing
+```text
+# Bridge tokens
+"Bridge 100 USDC from Ethereum to Polygon"
+"What chains can I bridge USDC between?"
 
-- **`relay_get_token_price`** - Get current token price on a specific chain
-  - Real-time pricing data for supported tokens
-  - Useful for checking values before bridging or swapping
+# Multi-chain swaps
+"Swap all my USDC from Ethereum and Polygon to ETH on Arbitrum"
+"Consolidate my tokens from multiple chains into USDC on Base"
 
-### Currency Discovery
+# Price discovery
+"Show current ETH prices across all chains"
+"What's the cheapest way to get USDC on Optimism?"
 
-- **`relay_get_currencies`** - Get curated currency metadata with advanced filtering
-  - Filter by chain IDs, search terms, contract addresses
-  - Support for verified tokens, native currencies, and external search
-  - Configurable limits and deposit address filtering
+# Currency discovery  
+"Find all stablecoins available on Polygon"
+"Show me verified tokens with bridging support"
+```
 
-### Quote Generation
-
-- **`relay_get_quote`** - Get executable quote for bridging or swapping tokens
-  - Bridge tokens between different chains
-  - Swap tokens within the same chain
-  - Returns transaction steps, fees, and execution details
-
-- **`relay_get_multi_input_quote`** - Get quote for multi-chain token aggregation
-  - Aggregate tokens from multiple chains into a single destination
-  - Useful for consolidating holdings across chains
-
-### Execution & Swapping
-
-- **`relay_swap_multi_input`** - Execute multi-chain token swaps
-  - Swap tokens from multiple origin chains to single destination
-  - Returns executable transaction steps and comprehensive fee breakdown
-  - Supports partial fills and custom transaction parameters
-
-### Request Monitoring
-
-- **`relay_get_execution_status`** - Get current execution status of a cross-chain request
-  - Track transaction progress and status
-  - Returns transaction hashes and execution details
-
-- **`relay_get_request`** - Get detailed information about a specific cross-chain request
-  - Includes origin/destination chains, currencies, amounts, and status
-  - Can query by request ID or transaction hash
-
-### Transaction Management
-
-- **`relay_transactions_index`** - Notify Relay backend about a transaction
-  - Index transactions for cross-chain operation tracking
-  - Required for monitoring and status updates
 ## Development
 
 ```bash
-# Run type checking
-yarn typecheck
-
-# Development with auto-reload
-yarn dev
-
-# Build for production
-yarn build
-
-# Start production server
-yarn start
+yarn typecheck    # Type checking
+yarn dev         # Development with auto-reload
+yarn build       # Production build
+yarn start       # Start production server
 ```
 
 ## Project Structure
 
-```
+```text
 src/
 ├── client/           # HTTP client and error handling
-│   ├── RelayClient.ts    # Main API client with all endpoints
-│   └── errors.ts         # Custom error classes
-├── tools/            # MCP tool implementations
-│   ├── chains.ts         # Chain information tools
-│   ├── price.ts          # Token pricing tools
-│   ├── quotes.ts         # Quote generation tools
-│   ├── requests.ts       # Request monitoring tools
-│   ├── transactions.ts   # Transaction indexing tools
-│   ├── currencies.ts     # Currency discovery tools
-│   ├── swap.ts          # Multi-chain swap tools
-│   └── index.ts         # Tool aggregation
-├── types/
-│   └── relay.ts         # Complete TypeScript definitions
-├── config.ts            # Configuration settings
-└── index.ts             # MCP server entry point
+├── tools/            # 9 MCP tool implementations  
+├── types/relay.ts    # Complete TypeScript definitions
+├── config.ts         # API configuration
+└── index.ts          # MCP server entry point
 ```
-
-## Error Handling & Debugging
-
-The MCP server provides detailed error information for debugging:
-
-- **API Errors** - Include HTTP status codes and response data from Relay Protocol
-- **Connection Errors** - Indicate network connectivity issues
-- **Validation Errors** - Show which fields failed Zod schema validation with detailed messages
-- **Tool Errors** - Comprehensive error context for MCP tool failures
-
-All API requests are logged for debugging purposes.
-
-## Requirements
-
-- **Node.js** >= 18.0.0
-- **yarn** package manager
-- **TypeScript** for development
-
-## Quick Start
-
-1. **Clone and install**:
-
-   ```bash
-   git clone <repository-url>
-   cd relay-protocol-mcp-server
-   yarn install
-   ```
-
-2. **Build the project**:
-
-   ```bash
-   yarn build
-   ```
-
-3. **Test the server**:
-
-   ```bash
-   yarn dev
-   ```
-
-4. **Configure Claude Desktop** (see Integration section above)
-
-5. **Restart Claude Desktop** after configuration changes
 
 ## Troubleshooting
 
-### "No available tools" in Claude Desktop
+**"No available tools" in Claude:**
 
-If Claude Desktop shows "no available tools", try these steps:
+1. Verify absolute path in config is correct
+2. Test server: `echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | node dist/index.js`
+3. Restart Claude Desktop after config changes
+4. Ensure Node.js >= 20.0.0 and `yarn build` completed
 
-1. **Verify the path** in your configuration is correct and absolute:
+**Connection issues:**
 
-   ```bash
-   # Check if the built file exists
-   ls -la /path/to/relay-protocol-mcp-server/dist/index.js
-   ```
+- Run `yarn build` before starting
+- Check server starts without errors: `yarn dev`
+- Verify JSON syntax in Claude config file
 
-2. **Test the MCP server directly**:
+## Requirements
 
-   ```bash
-   echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | node dist/index.js
-   ```
-
-   Should return a list of 9 tools.
-
-3. **Check Claude Desktop logs** (if available) for error messages
-
-4. **Restart Claude Desktop** completely after configuration changes
-
-5. **Verify JSON syntax** in your `claude_desktop_config.json` file
-
-### Connection Issues
-
-- Ensure Node.js >= 18.0.0 is installed
-- Run `yarn build` to ensure the latest version is built
-- Check that the MCP server starts without errors: `yarn dev`
+- Node.js >= 20.0.0
+- yarn package manager
 
 ## API Reference
 
-This MCP server provides access to the complete [Relay Protocol REST API](https://docs.relay.link/references/api/). All endpoints are wrapped as MCP tools with proper TypeScript types and validation.
+Full access to [Relay Protocol REST API](https://docs.relay.link/references/api/) with TypeScript types and validation. The Relay Protocol supports:
 
-### Example Usage in Claude
-
-**Get supported chains:**
-```
-Show me all blockchain networks supported by Relay Protocol
-```
-
-**Check token price:**
-```
-What's the current price of USDC on Ethereum (chain ID 1)?
-```
-
-**Get a bridge quote:**
-```
-I want to bridge 100 USDC from Ethereum to Polygon. What would that cost?
-```
-
-**Find currencies:**
-```
-Show me all verified tokens available on Arbitrum
-```
-
-**Execute multi-chain swap:**
-```
-I want to swap tokens from multiple chains into USDC on Base
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes with proper TypeScript types
-4. Add tests for new functionality
-5. Run `yarn typecheck && yarn build`
-6. Submit a pull request
+- **50+ Blockchain Networks** including Ethereum, Polygon, Arbitrum, Optimism, Base, etc.
+- **1000+ Tokens** with real-time pricing and bridging support
+- **Free Public API** with no rate limits or authentication required
+- **Production-Ready** infrastructure handling millions in daily volume
 
 ## License
 
