@@ -32,10 +32,9 @@ export class RelayClient {
   }
 
   private setupInterceptors(): void {
-    // Request interceptor for logging
+    // Request interceptor - removed logging to avoid stdout pollution in MCP
     this.client.interceptors.request.use(
       (config) => {
-        console.debug(`[Relay API] ${config.method?.toUpperCase()} ${config.url}`);
         return config;
       },
       (error) => Promise.reject(error)

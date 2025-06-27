@@ -157,11 +157,11 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  console.error(`${config.mcp.serverName} MCP server running on stdio`);
+  // Server is now running silently on stdio
 }
 
 // Run the server
-main().catch((error) => {
-  console.error('Failed to start MCP server:', error);
+main().catch(() => {
+  // Silent failure - MCP servers should not output to console
   process.exit(1);
 });
