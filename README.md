@@ -38,7 +38,7 @@ Add to your Claude Desktop configuration file:
 ```json
 {
   "mcpServers": {
-    "relay-protocol": {
+    "Relay Protocol": {
       "command": "node",
       "args": ["/absolute/path/to/relay-protocol-mcp-server/dist/index.js"]
     }
