@@ -18,6 +18,8 @@ export const config = {
   /** MCP server configuration */
   mcp: {
     /** Server name identifier for MCP protocol */
-    serverName: 'relay-protocol-mcp',
+    serverName: 'Relay Protocol',
+    /** Server icon (base64 data URI or URL) */
+    serverIcon: './assets/icon.svg',
   },
 } as const;
