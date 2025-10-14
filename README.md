@@ -14,43 +14,17 @@ Model Context Protocol (MCP) server for the [Relay Protocol REST API](https://do
 
 ## Quick Start
 
-### Local Development (stdio transport)
+### Option 1: Local Setup (Claude Desktop)
 
 ```bash
 # Install and build
 yarn install && yarn build
 
-# Run development server
-yarn dev
-
-# Run production server
+# Run the server
 yarn start
 ```
 
-### Cloud Deployment (SSE transport)
-
-Deploy to Railway, Heroku, Render, or any cloud platform:
-
-```bash
-# Build the server
-yarn build
-
-# Start SSE server (uses PORT from environment or 3000)
-yarn start:sse
-
-# Or for development
-yarn dev:sse
-```
-
-See [RAILWAY.md](./RAILWAY.md) for detailed Railway deployment guide.
-
-## MCP Integration
-
-### Stdio Transport (Local - Claude Desktop)
-
-Add to your Claude Desktop configuration file:
-
-**Config Location:**
+**Claude Desktop Configuration:**
 
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
@@ -67,9 +41,16 @@ Add to your Claude Desktop configuration file:
 }
 ```
 
-### SSE Transport (Cloud - Any MCP Client)
+### Option 2: Cloud Deployment (Railway)
 
-For cloud-hosted deployments:
+**Deploy Steps:**
+
+1. Push your code to GitHub
+2. Go to [railway.app](https://railway.app) → "New Project" → "Deploy from GitHub repo"
+3. Select your repository (Railway auto-detects configuration)
+4. Get your deployment URL: `https://your-app.railway.app`
+
+**Claude Desktop Configuration:**
 
 ```json
 {
@@ -81,6 +62,19 @@ For cloud-hosted deployments:
   }
 }
 ```
+
+**Test Your Deployment:**
+
+```bash
+curl https://your-app.railway.app/health
+# Response: {"status":"healthy","server":"Relay Protocol","version":"0.1.0","transport":"sse"}
+```
+
+**Deployment Info:**
+- Free tier: $5/month credits (plenty for personal use)
+- Memory usage: ~50-100MB RAM
+- Auto-sleeps after 30 minutes of inactivity
+- Railway CLI: `npm i -g @railway/cli` (optional)
 
 ## Available Tools (9 total)
 
@@ -120,9 +114,11 @@ For cloud-hosted deployments:
 
 ```bash
 yarn typecheck    # Type checking
-yarn dev         # Development with auto-reload
-yarn build       # Production build
-yarn start       # Start production server
+yarn dev          # Development (stdio)
+yarn dev:sse      # Development (SSE/HTTP)
+yarn build        # Production build
+yarn start        # Start stdio server
+yarn start:sse    # Start SSE server
 ```
 
 ## Project Structure
@@ -133,7 +129,8 @@ src/
 ├── tools/            # 9 MCP tool implementations  
 ├── types/relay.ts    # Complete TypeScript definitions
 ├── config.ts         # API configuration
-└── index.ts          # MCP server entry point
+├── index.ts          # Stdio transport (local)
+└── server.ts         # SSE transport (cloud)
 ```
 
 ## Troubleshooting
