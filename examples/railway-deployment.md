@@ -118,13 +118,13 @@ Test the SSE server locally:
 
 ```bash
 # Build the project
-yarn build
+pnpm build
 
 # Start the SSE server
-yarn start:sse
+pnpm start:sse
 
 # Or use development mode with auto-reload
-yarn dev:sse
+pnpm dev:sse
 ```
 
 Then test locally:

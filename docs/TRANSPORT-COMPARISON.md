@@ -11,7 +11,7 @@ This document explains the differences between the two transport methods support
 | **Use Case** | Local development, Claude Desktop | Cloud hosting, web clients |
 | **Deployment** | Local machine only | Railway, Heroku, Render, etc. |
 | **Port** | Not applicable | Configurable (default: 3000) |
-| **Command** | `yarn start` | `yarn start:sse` |
+| **Command** | `pnpm start` | `pnpm start:sse` |
 | **Network** | None (local process) | HTTP server (public/private) |
 
 ## Stdio Transport
@@ -155,22 +155,22 @@ The SSE server exposes these HTTP endpoints:
 ### Local Development
 ```bash
 # Test stdio transport
-yarn dev
+pnpm dev
 
 # Test SSE transport
-yarn dev:sse
+pnpm dev:sse
 ```
 
 ### Production Build
 ```bash
 # Build both
-yarn build
+pnpm build
 
 # Run stdio version
-yarn start
+pnpm start
 
 # Run SSE version
-yarn start:sse
+pnpm start:sse
 ```
 
 ## Choosing the Right Transport

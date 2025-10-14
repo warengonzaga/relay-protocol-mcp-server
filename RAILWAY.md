@@ -66,7 +66,7 @@ The server uses `railway.json` for deployment configuration:
 {
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "yarn install && yarn build"
+    "buildCommand": "pnpm install && pnpm build"
   },
   "deploy": {
     "startCommand": "node dist/server.js",
@@ -167,7 +167,7 @@ Test the SSE server locally before deploying:
 
 ```bash
 # Build the project
-yarn build
+pnpm build
 
 # Start the SSE server
 node dist/server.js
@@ -189,8 +189,8 @@ Or add to `package.json`:
 
 Then run:
 ```bash
-yarn dev:sse  # Development mode
-yarn build && yarn start:sse  # Production mode
+pnpm dev:sse  # Development mode
+pnpm build && pnpm start:sse  # Production mode
 ```
 
 ## Monitoring & Debugging

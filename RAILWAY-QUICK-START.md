@@ -26,15 +26,15 @@
 
 ```bash
 # Local Development (Stdio)
-yarn dev              # Development with auto-reload
-yarn start            # Production stdio server
+pnpm dev              # Development with auto-reload
+pnpm start            # Production stdio server
 
 # Cloud Deployment (SSE)
-yarn dev:sse          # Development SSE server with auto-reload
-yarn start:sse        # Production SSE server
+pnpm dev:sse          # Development SSE server with auto-reload
+pnpm start:sse        # Production SSE server
 
 # Build
-yarn build            # Build both servers
+pnpm build            # Build both servers
 ```
 
 ## Quick Deploy to Railway
@@ -68,7 +68,7 @@ yarn build            # Build both servers
 
 ```bash
 # Build and start
-yarn build && yarn start:sse
+pnpm build && pnpm start:sse
 
 # Test endpoints
 curl http://localhost:3000/health

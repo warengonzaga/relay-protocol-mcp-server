@@ -18,13 +18,13 @@ Model Context Protocol (MCP) server for the [Relay Protocol REST API](https://do
 
 ```bash
 # Install and build
-yarn install && yarn build
+pnpm install && pnpm build
 
 # Run development server
-yarn dev
+pnpm dev
 
 # Run production server
-yarn start
+pnpm start
 ```
 
 ### Cloud Deployment (SSE transport)
@@ -33,13 +33,13 @@ Deploy to Railway, Heroku, Render, or any cloud platform:
 
 ```bash
 # Build the server
-yarn build
+pnpm build
 
 # Start SSE server (uses PORT from environment or 3000)
-yarn start:sse
+pnpm start:sse
 
 # Or for development
-yarn dev:sse
+pnpm dev:sse
 ```
 
 See [RAILWAY.md](./RAILWAY.md) for detailed Railway deployment guide.
@@ -119,10 +119,10 @@ For cloud-hosted deployments:
 ## Development
 
 ```bash
-yarn typecheck    # Type checking
-yarn dev         # Development with auto-reload
-yarn build       # Production build
-yarn start       # Start production server
+pnpm typecheck    # Type checking
+pnpm dev         # Development with auto-reload
+pnpm build       # Production build
+pnpm start       # Start production server
 ```
 
 ## Project Structure
@@ -143,18 +143,18 @@ src/
 1. Verify absolute path in config is correct
 2. Test server: `echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | node dist/index.js`
 3. Restart Claude Desktop after config changes
-4. Ensure Node.js >= 20.0.0 and `yarn build` completed
+4. Ensure Node.js >= 20.0.0 and `pnpm build` completed
 
 **Connection issues:**
 
-- Run `yarn build` before starting
-- Check server starts without errors: `yarn dev`
+- Run `pnpm build` before starting
+- Check server starts without errors: `pnpm dev`
 - Verify JSON syntax in Claude config file
 
 ## Requirements
 
 - Node.js >= 20.0.0
-- yarn package manager
+- pnpm package manager
 
 ## API Reference
 

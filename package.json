@@ -46,5 +46,5 @@
   ],
   "author": "Waren Gonzaga <opensource@warengonzaga.com>",
   "license": "MIT",
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "pnpm@10.18.2"
 }
