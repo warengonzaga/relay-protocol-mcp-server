@@ -1,0 +1,37 @@
+# Railway ignore file - files to exclude from deployment
+
+# Development files
+node_modules/
+.git/
+.github/
+.vscode/
+.devcontainer/
+
+# Source files (we only need dist/)
+src/
+
+# Build artifacts (except dist/)
+*.log
+*.tsbuildinfo
+
+# Environment files
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+*.swp
+*.swo
+*~
+.idea/
+
+# Test files
+coverage/
+.nyc_output/
+
+# Documentation development
+docs/
+examples/

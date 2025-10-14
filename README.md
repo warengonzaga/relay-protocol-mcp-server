@@ -14,6 +14,8 @@ Model Context Protocol (MCP) server for the [Relay Protocol REST API](https://do
 
 ## Quick Start
 
+### Local Development (stdio transport)
+
 ```bash
 # Install and build
 yarn install && yarn build
@@ -25,7 +27,26 @@ yarn dev
 yarn start
 ```
 
+### Cloud Deployment (SSE transport)
+
+Deploy to Railway, Heroku, Render, or any cloud platform:
+
+```bash
+# Build the server
+yarn build
+
+# Start SSE server (uses PORT from environment or 3000)
+yarn start:sse
+
+# Or for development
+yarn dev:sse
+```
+
+See [RAILWAY.md](./RAILWAY.md) for detailed Railway deployment guide.
+
 ## MCP Integration
+
+### Stdio Transport (Local - Claude Desktop)
 
 Add to your Claude Desktop configuration file:
 
@@ -41,6 +62,21 @@ Add to your Claude Desktop configuration file:
     "Relay Protocol": {
       "command": "node",
       "args": ["/absolute/path/to/relay-protocol-mcp-server/dist/index.js"]
+    }
+  }
+}
+```
+
+### SSE Transport (Cloud - Any MCP Client)
+
+For cloud-hosted deployments:
+
+```json
+{
+  "mcpServers": {
+    "Relay Protocol": {
+      "transport": "sse",
+      "url": "https://your-app.railway.app/sse"
     }
   }
 }

@@ -10,7 +10,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
+    "dev:sse": "tsx src/server.ts",
     "start": "node dist/index.js",
+    "start:sse": "node dist/server.js",
     "test:watch": "vitest watch",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -18,7 +20,9 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.5.0",
+    "@types/express": "^5.0.3",
     "axios": "^1.6.7",
+    "express": "^5.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
