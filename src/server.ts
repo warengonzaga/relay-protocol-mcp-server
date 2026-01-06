@@ -7,9 +7,11 @@
  * transport instead of stdio. This allows the server to be deployed to cloud platforms like Railway,
  * Heroku, Render, or any other hosting service that supports HTTP servers.
  * 
- * The server exposes two endpoints:
+ * The server exposes the following endpoints:
  * - GET /sse - SSE endpoint for MCP protocol communication
  * - POST /message - HTTP endpoint for sending messages to the MCP server
+ * - GET /health - Health check endpoint
+ * - GET / - Server information and available tools
  * 
  * Environment Variables:
  * - PORT: Port number to listen on (default: 3000)
@@ -124,6 +126,14 @@ async function main() {
     } catch (error) {
       // Handle Relay API errors (HTTP status codes, API responses)
       if (error instanceof RelayAPIError) {
+        // Log full error details server-side for debugging
+        console.error('Relay API error:', {
+          message: error.message,
+          statusCode: error.statusCode,
+          responseData: error.responseData,
+          requestData: error.requestData,
+        });
+        
         return {
           content: [
             {
@@ -134,7 +144,7 @@ async function main() {
                   details: {
                     statusCode: error.statusCode,
                     response: error.responseData,
-                    request: error.requestData,
+                    // Request data logged server-side only
                   },
                 },
                 null,
@@ -229,27 +239,45 @@ async function main() {
   app.get('/sse', async (req, res) => {
     console.log('New SSE connection established');
     
-    const transport = new SSEServerTransport('/message', res);
-    const sessionId = transport.sessionId;
-    
-    // Store transport for message routing
-    transports.set(sessionId, transport);
-    
-    // Connect the transport to the MCP server
-    await server.connect(transport);
-    
-    // Handle client disconnect
-    req.on('close', () => {
-      console.log(`SSE connection closed for session: ${sessionId}`);
-      transports.delete(sessionId);
-    });
+    try {
+      const transport = new SSEServerTransport('/message', res);
+      const sessionId = transport.sessionId;
+      
+      if (!sessionId) {
+        res.status(500).json({ error: 'Failed to initialize SSE session: missing session ID' });
+        return;
+      }
+      
+      // Store transport for message routing
+      transports.set(sessionId, transport);
+      
+      // Connect the transport to the MCP server
+      await server.connect(transport);
+      
+      // Handle client disconnect
+      req.on('close', () => {
+        console.log(`SSE connection closed for session: ${sessionId}`);
+        if (sessionId) {
+          transports.delete(sessionId);
+        }
+      });
+    } catch (error) {
+      console.error('Failed to establish SSE connection:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ 
+          error: 'Failed to establish SSE connection',
+          details: error instanceof Error ? error.message : String(error)
+        });
+      }
+    }
   });
 
   // Message endpoint for receiving client messages
   app.post('/message', async (req, res) => {
-    const sessionId = req.query.sessionId as string;
+    const sessionIdParam = req.query.sessionId;
+    const sessionId = Array.isArray(sessionIdParam) ? sessionIdParam[0] : sessionIdParam;
     
-    if (!sessionId) {
+    if (!sessionId || typeof sessionId !== 'string') {
       res.status(400).json({ error: 'Missing sessionId query parameter' });
       return;
     }
