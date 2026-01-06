@@ -14,7 +14,7 @@ Model Context Protocol (MCP) server for the [Relay Protocol REST API](https://do
 
 ## Quick Start
 
-### Local Development (stdio transport)
+### Option 1: Local Setup (Claude Desktop)
 
 ```bash
 # Install and build
@@ -67,9 +67,16 @@ Add to your Claude Desktop configuration file:
 }
 ```
 
-### SSE Transport (Cloud - Any MCP Client)
+### Option 2: Cloud Deployment (Railway)
 
-For cloud-hosted deployments:
+**Deploy Steps:**
+
+1. Push your code to GitHub
+2. Go to [railway.app](https://railway.app) → "New Project" → "Deploy from GitHub repo"
+3. Select your repository (Railway auto-detects configuration)
+4. Get your deployment URL: `https://your-app.railway.app`
+
+**Claude Desktop Configuration:**
 
 ```json
 {
@@ -81,6 +88,19 @@ For cloud-hosted deployments:
   }
 }
 ```
+
+**Test Your Deployment:**
+
+```bash
+curl https://your-app.railway.app/health
+# Response: {"status":"healthy","server":"Relay Protocol","version":"0.1.0","transport":"sse"}
+```
+
+**Deployment Info:**
+- Free tier: $5/month credits (plenty for personal use)
+- Memory usage: ~50-100MB RAM
+- Auto-sleeps after 30 minutes of inactivity
+- Railway CLI: `npm i -g @railway/cli` (optional)
 
 ## Available Tools (9 total)
 
@@ -133,7 +153,8 @@ src/
 ├── tools/            # 9 MCP tool implementations  
 ├── types/relay.ts    # Complete TypeScript definitions
 ├── config.ts         # API configuration
-└── index.ts          # MCP server entry point
+├── index.ts          # Stdio transport (local)
+└── server.ts         # SSE transport (cloud)
 ```
 
 ## Troubleshooting
