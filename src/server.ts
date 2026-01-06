@@ -58,7 +58,11 @@ async function main() {
     {
       name: config.mcp.serverName,
       version: '0.1.0',
-      icon: config.mcp.serverIcon,
+      icons: [
+        {
+          src: config.mcp.serverIcon,
+        },
+      ],
     },
     {
       capabilities: {

@@ -70,7 +70,7 @@ function handleSwapMultiInput(client: RelayClient) {
       return await client.swapMultiInput(validated);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        throw new Error(`Invalid arguments: ${error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`);
+        throw new Error(`Invalid arguments: ${error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`);
       }
       throw error;
     }
