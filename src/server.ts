@@ -166,6 +166,9 @@ async function main() {
       }
 
       // Handle all other unexpected errors
+      // Log stack trace server-side for debugging
+      console.error('Unexpected tool error:', error);
+      
       return {
         content: [
           {
@@ -175,7 +178,7 @@ async function main() {
                 error: 'Unexpected error',
                 details: {
                   message: error instanceof Error ? error.message : String(error),
-                  stack: error instanceof Error ? error.stack : undefined,
+                  // Stack traces logged server-side only
                 },
               },
               null,
@@ -215,23 +218,56 @@ async function main() {
     });
   });
 
+  // Store active transports for message routing
+  const transports = new Map<string, SSEServerTransport>();
+
   // SSE endpoint for MCP communication
   app.get('/sse', async (req, res) => {
     console.log('New SSE connection established');
     
     const transport = new SSEServerTransport('/message', res);
+    const sessionId = transport.sessionId;
+    
+    // Store transport for message routing
+    transports.set(sessionId, transport);
+    
+    // Connect the transport to the MCP server
     await server.connect(transport);
     
     // Handle client disconnect
     req.on('close', () => {
-      console.log('SSE connection closed');
+      console.log(`SSE connection closed for session: ${sessionId}`);
+      transports.delete(sessionId);
     });
   });
 
   // Message endpoint for receiving client messages
-  app.post('/message', async (_req, res) => {
-    // The SSE transport handles this internally
-    res.status(200).end();
+  app.post('/message', async (req, res) => {
+    const sessionId = req.query.sessionId as string;
+    
+    if (!sessionId) {
+      res.status(400).json({ error: 'Missing sessionId query parameter' });
+      return;
+    }
+    
+    const transport = transports.get(sessionId);
+    
+    if (!transport) {
+      res.status(404).json({ error: 'Session not found' });
+      return;
+    }
+    
+    try {
+      await transport.handlePostMessage(req, res);
+    } catch (error) {
+      console.error('Error handling POST message:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ 
+          error: 'Failed to process message',
+          details: error instanceof Error ? error.message : String(error)
+        });
+      }
+    }
   });
 
   // Start the HTTP server
