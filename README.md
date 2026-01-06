@@ -14,18 +14,39 @@ Model Context Protocol (MCP) server for the [Relay Protocol REST API](https://do
 
 ## Quick Start
 
+### Option 1: Local Setup (Claude Desktop)
+
 ```bash
 # Install and build
-yarn install && yarn build
+pnpm install && pnpm build
 
 # Run development server
-yarn dev
+pnpm dev
 
 # Run production server
-yarn start
+pnpm start
 ```
 
+### Cloud Deployment (SSE transport)
+
+Deploy to Railway, Heroku, Render, or any cloud platform:
+
+```bash
+# Build the server
+pnpm build
+
+# Start SSE server (uses PORT from environment or 3000)
+pnpm start:sse
+
+# Or for development
+pnpm dev:sse
+```
+
+See [RAILWAY.md](./RAILWAY.md) for detailed Railway deployment guide.
+
 ## MCP Integration
+
+### Stdio Transport (Local - Claude Desktop)
 
 Add to your Claude Desktop configuration file:
 
@@ -45,6 +66,41 @@ Add to your Claude Desktop configuration file:
   }
 }
 ```
+
+### Option 2: Cloud Deployment (Railway)
+
+**Deploy Steps:**
+
+1. Push your code to GitHub
+2. Go to [railway.app](https://railway.app) → "New Project" → "Deploy from GitHub repo"
+3. Select your repository (Railway auto-detects configuration)
+4. Get your deployment URL: `https://your-app.railway.app`
+
+**Claude Desktop Configuration:**
+
+```json
+{
+  "mcpServers": {
+    "Relay Protocol": {
+      "transport": "sse",
+      "url": "https://your-app.railway.app/sse"
+    }
+  }
+}
+```
+
+**Test Your Deployment:**
+
+```bash
+curl https://your-app.railway.app/health
+# Response: {"status":"healthy","server":"Relay Protocol","version":"0.1.0","transport":"sse"}
+```
+
+**Deployment Info:**
+- Free tier: $5/month credits (plenty for personal use)
+- Memory usage: ~50-100MB RAM
+- Auto-sleeps after 30 minutes of inactivity
+- Railway CLI: `npm i -g @railway/cli` (optional)
 
 ## Available Tools (9 total)
 
@@ -83,10 +139,10 @@ Add to your Claude Desktop configuration file:
 ## Development
 
 ```bash
-yarn typecheck    # Type checking
-yarn dev         # Development with auto-reload
-yarn build       # Production build
-yarn start       # Start production server
+pnpm typecheck    # Type checking
+pnpm dev         # Development with auto-reload
+pnpm build       # Production build
+pnpm start       # Start production server
 ```
 
 ## Project Structure
@@ -97,7 +153,8 @@ src/
 ├── tools/            # 9 MCP tool implementations  
 ├── types/relay.ts    # Complete TypeScript definitions
 ├── config.ts         # API configuration
-└── index.ts          # MCP server entry point
+├── index.ts          # Stdio transport (local)
+└── server.ts         # SSE transport (cloud)
 ```
 
 ## Troubleshooting
@@ -107,18 +164,18 @@ src/
 1. Verify absolute path in config is correct
 2. Test server: `echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | node dist/index.js`
 3. Restart Claude Desktop after config changes
-4. Ensure Node.js >= 20.0.0 and `yarn build` completed
+4. Ensure Node.js >= 20.0.0 and `pnpm build` completed
 
 **Connection issues:**
 
-- Run `yarn build` before starting
-- Check server starts without errors: `yarn dev`
+- Run `pnpm build` before starting
+- Check server starts without errors: `pnpm dev`
 - Verify JSON syntax in Claude config file
 
 ## Requirements
 
 - Node.js >= 20.0.0
-- yarn package manager
+- pnpm package manager
 
 ## API Reference
 

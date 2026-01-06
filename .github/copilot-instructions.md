@@ -115,10 +115,10 @@ try {
 
 ## Development Workflow
 
-1. Run `yarn dev` for development
-2. Use `yarn typecheck` before committing
-3. Run `yarn test` for test suite
-4. Use `yarn build` for production build
+1. Run `pnpm dev` for development
+2. Use `pnpm typecheck` before committing
+3. Run `pnpm test` for test suite
+4. Use `pnpm build` for production build
 
 ## Debugging Tips
 

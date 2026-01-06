@@ -10,25 +10,29 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
+    "dev:sse": "tsx src/server.ts",
     "start": "node dist/index.js",
+    "start:sse": "node dist/server.js",
     "test:watch": "vitest watch",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.24.0",
-    "axios": "^1.12.0",
-    "zod": "^3.22.4"
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "axios": "^1.13.2",
+    "express": "^5.2.1",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
-    "@types/node": "^20.11.24",
-    "@typescript-eslint/eslint-plugin": "^7.1.0",
-    "@typescript-eslint/parser": "^7.1.0",
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.5",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
+    "eslint": "^9.39.2",
+    "prettier": "^3.7.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -42,5 +46,5 @@
   ],
   "author": "Waren Gonzaga <opensource@warengonzaga.com>",
   "license": "MIT",
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "pnpm@10.18.2"
 }
