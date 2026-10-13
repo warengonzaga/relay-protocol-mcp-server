@@ -1,7 +1,7 @@
 {
   "name": "relay-protocol-mcp",
   "version": "0.1.0",
-  "description": "Model Context Protocol server for Relay Protocol REST API",
+  "description": "Discontinued community MCP server for Relay Protocol",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
