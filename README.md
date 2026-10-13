@@ -1,191 +1,27 @@
 # Relay Protocol MCP Server
 
-Model Context Protocol (MCP) server for the [Relay Protocol REST API](https://docs.relay.link/references/api/) enabling cross-chain bridging and token swapping operations.
+A community-built MCP integration for the Relay Protocol API.
 
-## Features
+## Project status
 
-- **Cross-Chain Bridging** - Bridge tokens between 50+ blockchain networks
-- **Multi-Chain Swaps** - Aggregate tokens from multiple chains into single destination
-- **Real-Time Pricing** - Get current token prices across all supported chains
-- **Request Monitoring** - Track execution status and transaction details
-- **Currency Discovery** - Browse 1000+ supported tokens with filtering
-- **Zero Configuration** - No API keys required (free public API)
-- **Type Safety** - Full TypeScript support with comprehensive validation
+**Discontinued.** Relay Protocol is not discontinued. This community project is being retired because the API is changing and responses are no longer available publicly outside the authorized integration scope. Relay's team has also created its own MCP server, so this project will not be maintained.
 
-## Quick Start
+Read Relay's [Requests v3 migration guide](https://docs.relay.link/references/api/api_guides/migrating-to-requests-v3).
 
-### Option 1: Local Setup (Claude Desktop)
+This repository no longer makes Relay API requests. Its MCP entry points expose only a static retirement notice. The original client and tool source remains here for reference.
 
-```bash
-# Install and build
-pnpm install && pnpm build
+## Run the status server locally
 
-# Run development server
-pnpm dev
+Requires Node.js 20 or newer and pnpm.
 
-# Run production server
+```sh
+pnpm install
+pnpm build
 pnpm start
 ```
 
-### Cloud Deployment (SSE transport)
-
-Deploy to Railway, Heroku, Render, or any cloud platform:
-
-```bash
-# Build the server
-pnpm build
-
-# Start SSE server (uses PORT from environment or 3000)
-pnpm start:sse
-
-# Or for development
-pnpm dev:sse
-```
-
-See [RAILWAY.md](./RAILWAY.md) for detailed Railway deployment guide.
-
-## MCP Integration
-
-### Stdio Transport (Local - Claude Desktop)
-
-Add to your Claude Desktop configuration file:
-
-**Config Location:**
-
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-- **Linux**: `~/.config/Claude/claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "Relay Protocol": {
-      "command": "node",
-      "args": ["/absolute/path/to/relay-protocol-mcp-server/dist/index.js"]
-    }
-  }
-}
-```
-
-### Option 2: Cloud Deployment (Railway)
-
-**Deploy Steps:**
-
-1. Push your code to GitHub
-2. Go to [railway.app](https://railway.app) → "New Project" → "Deploy from GitHub repo"
-3. Select your repository (Railway auto-detects configuration)
-4. Get your deployment URL: `https://your-app.railway.app`
-
-**Claude Desktop Configuration:**
-
-```json
-{
-  "mcpServers": {
-    "Relay Protocol": {
-      "transport": "sse",
-      "url": "https://your-app.railway.app/sse"
-    }
-  }
-}
-```
-
-**Test Your Deployment:**
-
-```bash
-curl https://your-app.railway.app/health
-# Response: {"status":"healthy","server":"Relay Protocol","version":"0.1.0","transport":"sse"}
-```
-
-**Deployment Info:**
-- Free tier: $5/month credits (plenty for personal use)
-- Memory usage: ~50-100MB RAM
-- Auto-sleeps after 30 minutes of inactivity
-- Railway CLI: `npm i -g @railway/cli` (optional)
-
-## Available Tools (9 total)
-
-| Tool | Purpose | Example Use Case |
-|------|---------|------------------|
-| `relay_get_chains` | List supported blockchain networks | "Show me all chains Relay supports" |
-| `relay_get_token_price` | Get real-time token prices | "What's the price of USDC on Ethereum?" |
-| `relay_get_currencies` | Discover tokens with advanced filtering | "Show verified tokens on Arbitrum" |
-| `relay_get_quote` | Generate bridging/swap quotes | "Quote bridging 100 USDC from Ethereum to Polygon" |
-| `relay_swap_multi_input` | Execute multi-chain swaps | "Swap ETH + USDC from multiple chains to USDC on Base" |
-| `relay_get_execution_status` | Track request progress | "Check status of my bridge transaction" |
-| `relay_get_requests` | Monitor request history | "Show my recent cross-chain transactions" |
-| `relay_transactions_index` | Index transactions for tracking | "Register this transaction for monitoring" |
-| `relay_transactions_single` | Index specific transfers/wraps | "Track this specific transfer operation" |
-
-## Example Prompts
-
-```text
-# Bridge tokens
-"Bridge 100 USDC from Ethereum to Polygon"
-"What chains can I bridge USDC between?"
-
-# Multi-chain swaps
-"Swap all my USDC from Ethereum and Polygon to ETH on Arbitrum"
-"Consolidate my tokens from multiple chains into USDC on Base"
-
-# Price discovery
-"Show current ETH prices across all chains"
-"What's the cheapest way to get USDC on Optimism?"
-
-# Currency discovery  
-"Find all stablecoins available on Polygon"
-"Show me verified tokens with bridging support"
-```
-
-## Development
-
-```bash
-pnpm typecheck    # Type checking
-pnpm dev         # Development with auto-reload
-pnpm build       # Production build
-pnpm start       # Start production server
-```
-
-## Project Structure
-
-```text
-src/
-├── client/           # HTTP client and error handling
-├── tools/            # 9 MCP tool implementations  
-├── types/relay.ts    # Complete TypeScript definitions
-├── config.ts         # API configuration
-├── index.ts          # Stdio transport (local)
-└── server.ts         # SSE transport (cloud)
-```
-
-## Troubleshooting
-
-**"No available tools" in Claude:**
-
-1. Verify absolute path in config is correct
-2. Test server: `echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | node dist/index.js`
-3. Restart Claude Desktop after config changes
-4. Ensure Node.js >= 20.0.0 and `pnpm build` completed
-
-**Connection issues:**
-
-- Run `pnpm build` before starting
-- Check server starts without errors: `pnpm dev`
-- Verify JSON syntax in Claude config file
-
-## Requirements
-
-- Node.js >= 20.0.0
-- pnpm package manager
-
-## API Reference
-
-Full access to [Relay Protocol REST API](https://docs.relay.link/references/api/) with TypeScript types and validation. The Relay Protocol supports:
-
-- **50+ Blockchain Networks** including Ethereum, Polygon, Arbitrum, Optimism, Base, etc.
-- **1000+ Tokens** with real-time pricing and bridging support
-- **Free Public API** with no rate limits or authentication required
-- **Production-Ready** infrastructure handling millions in daily volume
+The server provides the `relay_project_status` MCP tool. The optional SSE entry point can be started with `pnpm start:sse`; it also exposes `/health` and `/` status endpoints.
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).
